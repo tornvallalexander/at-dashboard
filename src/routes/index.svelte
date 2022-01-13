@@ -1,7 +1,17 @@
-<script lang="ts">
-	import '../app.css';
+<script>
+	import Typing from "../components/Typing.svelte"
 </script>
 
+<svelte:head>
+	<title>Welcome</title>
+</svelte:head>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<style>
+	div {
+		margin-top: 30vh;
+	}
+</style>
+
+<div class="">
+	<Typing />
+</div>
