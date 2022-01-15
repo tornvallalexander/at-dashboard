@@ -1,0 +1,1 @@
+export const CHAR_ERROR = "text-red-400"

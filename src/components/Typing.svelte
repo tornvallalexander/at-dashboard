@@ -1,58 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { getWords } from "$utils/words"
+	import * as CLASS from "$utils/constants"
 
-	const words = [
-		"rack",
-		"taxi",
-		"dish",
-		"microphone",
-		"sharp",
-		"make",
-		"talented",
-		"solo",
-		"race",
-		"multimedia",
-		"red",
-		"proclaim",
-		"name",
-		"tycoon",
-		"evolution",
-		"effect",
-		"linger",
-		"learn",
-		"lighter",
-		"redundancy",
-		"drift",
-		"lesson",
-		"cutting",
-		"section",
-		"house",
-		"feminine",
-		"future",
-		"census",
-		"exceed",
-		"bathtub",
-		"topple",
-		"center",
-		"world",
-		"overeat",
-		"surprise",
-		"posture",
-		"verdict",
-		"leg",
-		"gossip",
-		"opposite",
-		"operation",
-		"goal",
-		"traction",
-		"recruit",
-		"shelter",
-		"reflect",
-		"banner",
-		"loss",
-		"introduce",
-		"dry",
-	]
+	const words = getWords()
 
 	onMount(() => {
 		window.document.onkeydown = (e) => handleKeystroke(e)
@@ -150,24 +101,23 @@
 
 	const handleCharError = (key: string) => {
 		const DOMCurrentChar = getCurrentChar()
-		console.log(DOMCurrentChar)
 		if (!DOMCurrentChar || current.char > words[current.word].length) {
 			current.char += 1
 			const span = document.createElement("span")
 			span.id = `c${current.word}${current.char}`
-			span.className = "text-red-400"
+			span.className = CLASS.CHAR_ERROR
 			span.innerText = key
 			const DOMCurrentWord = getCurrentWord()
 			DOMCurrentWord.appendChild(span)
 			return
 		}
-		DOMCurrentChar.className = "text-red-400"
+		DOMCurrentChar.className = CLASS.CHAR_ERROR
 		current.char += 1
 	}
 
 	const removeCharClass = () => {
 		const DOMCurrentChar = getCurrentChar()
-		DOMCurrentChar.classList.remove("text-red-400")
+		DOMCurrentChar.classList.remove(CLASS.CHAR_ERROR)
 		DOMCurrentChar.classList.remove("text-gray-100")
 	}
 
