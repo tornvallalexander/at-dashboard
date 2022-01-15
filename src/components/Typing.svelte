@@ -17,6 +17,7 @@
 	}
 
 	const handleKeystroke = ({ key, altKey, ctrlKey, shiftKey }: KeystrokeProps) => {
+		if (current.word === words.length) return
 		switch (key) {
 			case "Backspace":
 				// check special keys
@@ -39,7 +40,6 @@
 	}
 
 	const handleChar = (key: string) => {
-		if (current.word === words.length && current.char > words[current.word].length) return
 		const currentChar = words[current.word][current.char]
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
