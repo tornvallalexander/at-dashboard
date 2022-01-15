@@ -85,15 +85,10 @@
 				// check special keys
 				handleChar(key)
 		}
-
-		console.log(key)
 	}
 
 	const handleChar = (key: string) => {
-		const DOMCurrentWord = getCurrentWord()
-		if (DOMCurrentWord.className.includes("underline")) {
-			return
-		}
+		if (current.word === words.length && current.char > words[current.word].length) return
 		const currentChar = words[current.word][current.char]
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
@@ -101,7 +96,7 @@
 			current.char += 1
 			return
 		}
-		DOMCurrentWord.classList.add("underline")
+		handleCharError(key)
 	}
 
 	const handleSpace = () => {
@@ -110,19 +105,23 @@
 	}
 
 	const handleBack = () => {
-		if (current.char === 0) {
-			if (current.word === 0) {
-				return
-			}
-			removeWordError()
-			current.word -= 1
-			current.char = words[current.word].length
+		if (current.char === 0 && current.word === 0) return;
+		if (current.char > words[current.word].length) {
+			removeCurrentChar()
+			current.char -= 1
 			return
 		}
-		const DOMPrevChar = getPrevChar()
-		DOMPrevChar.classList.remove("text-gray-100")
+		if (current.char === 0) {
+			removeWordError()
+			current.word -= 1
+			const DOMCurrentWord = getCurrentWord()
+			current.char = DOMCurrentWord.children.length ? DOMCurrentWord.children.length : words[current.word].length
+			return
+		}
 		current.char -= 1
-		if (DOMPrevChar.innerText === words[current.word][current.char]) {
+		const DOMCurrentChar = getCurrentChar()
+		removeCharClass()
+		if (DOMCurrentChar.innerText === words[current.word][current.char]) {
 			removeWordError()
 		}
 	}
@@ -133,7 +132,9 @@
 	}
 
 	const getPrevChar = () => {
-		const DOMRef = `c${current.word}${current.char - 1}`
+		const currentId = `${current.word}${current.char}`
+		const prevId = parseInt(currentId) - 1
+		const DOMRef = `c${prevId}`
 		return document.getElementById(DOMRef)
 	}
 
@@ -147,6 +148,35 @@
 		DOMCurrentWord.classList.remove("underline")
 	}
 
+	const handleCharError = (key: string) => {
+		const DOMCurrentChar = getCurrentChar()
+		console.log(DOMCurrentChar)
+		if (!DOMCurrentChar || current.char > words[current.word].length) {
+			current.char += 1
+			const span = document.createElement("span")
+			span.id = `c${current.word}${current.char}`
+			span.className = "text-red-400"
+			span.innerText = key
+			const DOMCurrentWord = getCurrentWord()
+			DOMCurrentWord.appendChild(span)
+			return
+		}
+		DOMCurrentChar.className = "text-red-400"
+		current.char += 1
+	}
+
+	const removeCharClass = () => {
+		const DOMCurrentChar = getCurrentChar()
+		DOMCurrentChar.classList.remove("text-red-400")
+		DOMCurrentChar.classList.remove("text-gray-100")
+	}
+
+	const removeCurrentChar = () => {
+		const DOMCurrentWord = getCurrentWord()
+		const DOMCurrentChar = getCurrentChar()
+		DOMCurrentWord.removeChild(DOMCurrentChar)
+	}
+
 	$: current = {
 		word: 0,
 		char: 0,
@@ -157,7 +187,7 @@
 	{#each words as word, i}
 		<div class="mr-3 text-gray-500 text-2xl font-medium" id={`w${i}`}>
 			{#each word as char, j}
-				<span id={`c${i}${j}`}>
+				<span class="transition-colors" id={`c${i}${j}`}>
 					{char}
 				</span>
 			{/each}
