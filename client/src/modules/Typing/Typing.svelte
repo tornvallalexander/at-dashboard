@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getWords } from "$utils/words"
-	import variables from "$lib/variables"
+	import { getRandomWords, getWords } from '$utils/words';
 	import * as CLASS from "$utils/constants"
 
-	const words = getWords()
+
+	let words = getRandomWords()
 
 	onMount(() => {
 		window.document.onkeydown = (e) => handleKeystroke(e)
 	})
+
+	let current = {
+		word: 0,
+		char: 0,
+	}
 
 	interface KeystrokeProps {
 		key: string;
@@ -45,6 +50,7 @@
 	}
 
 	const handleChar = (key: string) => {
+		// TODO: fix bug with words
 		const currentChar = words[current.word][current.char]
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
@@ -133,21 +139,22 @@
 		const DOMCurrentChar = getCurrentChar()
 		DOMCurrentWord.removeChild(DOMCurrentChar)
 	}
-
-	$: current = {
-		word: 0,
-		char: 0,
-	}
 </script>
 
 <div class="flex flex-wrap">
-	{#each words as word, i}
-		<div class="mr-3 text-gray-500 text-2xl font-medium" id={`w${i}`}>
-			{#each word as char, j}
-				<span class="transition-colors" id={`c${i}${j}`}>
-					{char}
-				</span>
+	{#await words}
+		<p>Loading...</p>
+		{:then words}
+			{#each words as word, i}
+				<div class="mr-3 text-gray-500 text-2xl font-medium" id={`w${i}`}>
+					{#each word as char, j}
+						<span class="transition-colors" id={`c${i}${j}`}>
+							{char}
+						</span>
+					{/each}
+				</div>
 			{/each}
-		</div>
-	{/each}
+		{:catch error}
+		<p>Something went wrong...</p>
+	{/await}
 </div>
