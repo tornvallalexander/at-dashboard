@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getWords } from "$utils/words"
-	import * as CLASS from "$utils/constants"
+	import { getWords } from "../utils/words"
+	import * as CLASS from "../utils/constants"
 
 	const words = getWords()
 
