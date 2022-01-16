@@ -1,0 +1,16 @@
+client/.DS_Store
+client/node_modules
+client/build
+client/.svelte-kit
+client/package
+
+client/.idea
+
+server/.env.development
+server/.env.production
+server/.env*
+
+client/.env.development
+client/.env.production
+client/.env.*
+
