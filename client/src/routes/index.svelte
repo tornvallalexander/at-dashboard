@@ -1,5 +1,5 @@
 <script>
-	import Typing from "../components/Typing.svelte"
+	import Typing from "$modules/Typing/Typing.svelte"
 </script>
 
 <svelte:head>

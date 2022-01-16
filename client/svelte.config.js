@@ -16,7 +16,9 @@ const config = {
 		vite: {
 			resolve: {
 				alias: {
-					$utils: resolve("./src/utils")
+					$utils: resolve("./src/utils"),
+					$modules: resolve("./src/modules"),
+					$lib: resolve("./src/lib"),
 				}
 			}
 		}

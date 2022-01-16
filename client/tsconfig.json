@@ -23,9 +23,9 @@
 		"allowJs": true,
 		"checkJs": true,
 		"paths": {
-			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
-			"$utils/*": ["src/utils/*"]
+			"$utils/*": ["src/utils/*"],
+			"$modules/*": ["src/modules/*"],
 		}
 	},
 	"include": [
