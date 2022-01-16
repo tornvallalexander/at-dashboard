@@ -11,7 +11,7 @@ func CheckError(err error) {
 	}
 }
 
-func CheckErrorFatal(err error) {
+func CheckFatalError(err error) {
 	if err != nil {
 		log.Fatalf("Failed to connect to Redis: %s\n", err)
 	}

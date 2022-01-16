@@ -12,11 +12,10 @@ var (
 
 func main() {
 	rdb, err := db.ConnectDB()
-	CheckErrorFatal(err)
-
+	CheckFatalError(err)
 	router := initRouter(rdb)
 	err = router.Run(listenAddr)
-	CheckErrorFatal(err)
+	CheckFatalError(err)
 }
 
 func initRouter(rdb *db.Database) *gin.Engine {
