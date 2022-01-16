@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getWords } from "../utils/words"
-	import * as CLASS from "../utils/constants"
+	import { getWords } from "$utils/words"
+	import variables from "$lib/variables"
+	import * as CLASS from "$utils/constants"
 
 	const words = getWords()
 
@@ -33,6 +34,10 @@
 				break;
 			case "Alt":
 				break;
+			case "Meta":
+				break;
+			case "Tab":
+				break;
 			default:
 				// check special keys
 				handleChar(key)
@@ -43,7 +48,7 @@
 		const currentChar = words[current.word][current.char]
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
-			DOMCurrentChar.classList.add("text-gray-100")
+			DOMCurrentChar.classList.add(CLASS.CHAR_CORRECT)
 			current.char += 1
 			return
 		}
@@ -77,6 +82,24 @@
 		}
 	}
 
+	const handleCharError = (key: string) => {
+		const DOMCurrentChar = getCurrentChar()
+		const DOMCurrentWord = getCurrentWord()
+		if (!DOMCurrentChar || current.char > words[current.word].length) {
+			current.char += 1
+			const span = document.createElement("span")
+			span.id = `c${current.word}${current.char}`
+			span.className = `${CLASS.COLOR_TRANSITION} ${CLASS.CHAR_ERROR}`
+			span.innerText = key
+			const DOMCurrentWord = getCurrentWord()
+			DOMCurrentWord.appendChild(span)
+			return
+		}
+		DOMCurrentChar.className = `${CLASS.COLOR_TRANSITION} ${CLASS.CHAR_ERROR}`
+		DOMCurrentWord.classList.add(CLASS.WORD_INCORRECT)
+		current.char += 1
+	}
+
 	const getCurrentChar = () => {
 		const DOMRef = `c${current.word}${current.char}`
 		return document.getElementById(DOMRef)
@@ -96,29 +119,13 @@
 
 	const removeWordError = () => {
 		const DOMCurrentWord = getCurrentWord()
-		DOMCurrentWord.classList.remove("underline")
-	}
-
-	const handleCharError = (key: string) => {
-		const DOMCurrentChar = getCurrentChar()
-		if (!DOMCurrentChar || current.char > words[current.word].length) {
-			current.char += 1
-			const span = document.createElement("span")
-			span.id = `c${current.word}${current.char}`
-			span.className = CLASS.CHAR_ERROR
-			span.innerText = key
-			const DOMCurrentWord = getCurrentWord()
-			DOMCurrentWord.appendChild(span)
-			return
-		}
-		DOMCurrentChar.className = CLASS.CHAR_ERROR
-		current.char += 1
+		DOMCurrentWord.classList.remove(CLASS.WORD_INCORRECT)
 	}
 
 	const removeCharClass = () => {
 		const DOMCurrentChar = getCurrentChar()
 		DOMCurrentChar.classList.remove(CLASS.CHAR_ERROR)
-		DOMCurrentChar.classList.remove("text-gray-100")
+		DOMCurrentChar.classList.remove(CLASS.CHAR_CORRECT)
 	}
 
 	const removeCurrentChar = () => {
