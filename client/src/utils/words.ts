@@ -1,6 +1,3 @@
-import axios from "axios"
-import variables from "../lib/variables"
-
 export function getWords(): string[] {
 	return [
 		"rack",
@@ -54,16 +51,4 @@ export function getWords(): string[] {
 		"introduce",
 		"dry",
 	]
-}
-
-export const getRandomWords = async () => {
-	console.log(`${variables.baseURL}/randomTopWords`)
-	const res = await axios.get(`http://localhost:8000/randomTopWords`)
-	const words = await res.data.words
-
-	if (res.status === 200) {
-		return words
-	} else {
-		throw new Error(words)
-	}
 }
