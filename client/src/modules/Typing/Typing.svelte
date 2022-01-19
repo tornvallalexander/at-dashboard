@@ -160,14 +160,14 @@
 <style>
 	/*keep these styles for later usage*/
 	:global(.text-gray-300) {}
-  :global(.text-red-500) {}
+  :global(.text-red-400) {}
 	:global(.underline-error) {
 		text-decoration: underline;
 		text-decoration-color: #f87171;
 	}
 </style>
 
-<div class="flex flex-wrap">
+<div class="flex flex-wrap max-w-[50rem]">
 	<Caret />
 	{#if words.length}
 		{#each words as word, i}

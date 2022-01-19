@@ -26,6 +26,7 @@
 			"$lib/*": ["src/lib/*"],
 			"$utils/*": ["src/utils/*"],
 			"$modules/*": ["src/modules/*"],
+			"$stores/*": ["src/stores/*"]
 		}
 	},
 	"include": [

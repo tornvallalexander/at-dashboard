@@ -19,6 +19,7 @@ const config = {
 					$utils: resolve("./src/utils"),
 					$modules: resolve("./src/modules"),
 					$lib: resolve("./src/lib"),
+					$stores: resolve("./src/stores"),
 				}
 			}
 		}
