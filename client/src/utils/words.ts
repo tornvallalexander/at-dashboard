@@ -1,4 +1,3 @@
-
 export function getWords(): string[] {
 	return [
 		"rack",
@@ -53,4 +52,3 @@ export function getWords(): string[] {
 		"dry",
 	]
 }
-

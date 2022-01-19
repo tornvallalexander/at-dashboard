@@ -1,13 +1,23 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getWords } from "$utils/words"
-	import variables from "$lib/variables"
+	import { word, char } from '../../stores/words';
+	import { state } from "../../stores/states"
 	import * as CLASS from "$utils/constants"
+	import axios from "axios"
+	import variables from '../../lib/variables';
+	import Caret from "./Caret.svelte"
 
-	const words = getWords()
+	let words = [];
 
-	onMount(() => {
-		window.document.onkeydown = (e) => handleKeystroke(e)
+	interface RandomTopWordsRes {
+		data: {
+			words: string[]
+		}
+	}
+
+	onMount(async () => {
+		const response = await axios.get<RandomTopWordsRes>(`${variables.baseURL}/randomTopWords`)
+		words = response.data.words
 	})
 
 	interface KeystrokeProps {
@@ -17,8 +27,8 @@
 		shiftKey: boolean;
 	}
 
-	const handleKeystroke = ({ key, altKey, ctrlKey, shiftKey }: KeystrokeProps) => {
-		if (current.word === words.length) return
+	const handleKeydown = ({ key, altKey, ctrlKey, shiftKey }: KeystrokeProps) => {
+		if ($state !== "typing") return
 		switch (key) {
 			case "Backspace":
 				// check special keys
@@ -38,6 +48,8 @@
 				break;
 			case "Tab":
 				break;
+			case "Shift":
+				break;
 			default:
 				// check special keys
 				handleChar(key)
@@ -45,39 +57,44 @@
 	}
 
 	const handleChar = (key: string) => {
-		const currentChar = words[current.word][current.char]
+		const currentChar = words[$word][$char]
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
 			DOMCurrentChar.classList.add(CLASS.CHAR_CORRECT)
-			current.char += 1
+			if (checkComplete()) {
+				char.update(ch => ch + 1)
+				handleComplete()
+				return
+			}
+			char.update(ch => ch + 1)
 			return
 		}
 		handleCharError(key)
 	}
 
 	const handleSpace = () => {
-		current.word += 1
-		current.char = 0
+		word.update(wd => wd + 1)
+		char.set(0)
 	}
 
 	const handleBack = () => {
-		if (current.char === 0 && current.word === 0) return;
-		if (current.char > words[current.word].length) {
+		if ($char === 0 && $word === 0) return;
+		if ($char > words[$word].length) {
+			char.update(ch => ch - 1)
 			removeCurrentChar()
-			current.char -= 1
 			return
 		}
-		if (current.char === 0) {
+		if ($char === 0) {
 			removeWordError()
-			current.word -= 1
+			word.update(wd => wd - 1)
 			const DOMCurrentWord = getCurrentWord()
-			current.char = DOMCurrentWord.children.length ? DOMCurrentWord.children.length : words[current.word].length
+			$char = DOMCurrentWord.children.length ? DOMCurrentWord.children.length : words[$word].length
 			return
 		}
-		current.char -= 1
+		char.update(ch => ch - 1)
 		const DOMCurrentChar = getCurrentChar()
 		removeCharClass()
-		if (DOMCurrentChar.innerText === words[current.word][current.char]) {
+		if (DOMCurrentChar.innerText === words[$word][$char]) {
 			removeWordError()
 		}
 	}
@@ -85,35 +102,35 @@
 	const handleCharError = (key: string) => {
 		const DOMCurrentChar = getCurrentChar()
 		const DOMCurrentWord = getCurrentWord()
-		if (!DOMCurrentChar || current.char > words[current.word].length) {
-			current.char += 1
+		if (!DOMCurrentChar || $char > words[$word].length) {
 			const span = document.createElement("span")
-			span.id = `c${current.word}${current.char}`
+			span.id = `c${$word}${$char}`
 			span.className = `${CLASS.COLOR_TRANSITION} ${CLASS.CHAR_ERROR}`
 			span.innerText = key
 			const DOMCurrentWord = getCurrentWord()
 			DOMCurrentWord.appendChild(span)
+			char.update(ch => ch + 1)
 			return
 		}
 		DOMCurrentChar.className = `${CLASS.COLOR_TRANSITION} ${CLASS.CHAR_ERROR}`
 		DOMCurrentWord.classList.add(CLASS.WORD_INCORRECT)
-		current.char += 1
+		char.update(ch => ch + 1)
 	}
 
 	const getCurrentChar = () => {
-		const DOMRef = `c${current.word}${current.char}`
+		const DOMRef = `c${$word}${$char}`
 		return document.getElementById(DOMRef)
 	}
 
 	const getPrevChar = () => {
-		const currentId = `${current.word}${current.char}`
+		const currentId = `${$word}${$char}`
 		const prevId = parseInt(currentId) - 1
 		const DOMRef = `c${prevId}`
 		return document.getElementById(DOMRef)
 	}
 
 	const getCurrentWord = () => {
-		const DOMRef = `w${current.word}`
+		const DOMRef = `w${$word}`
 		return document.getElementById(DOMRef)
 	}
 
@@ -134,20 +151,38 @@
 		DOMCurrentWord.removeChild(DOMCurrentChar)
 	}
 
-	$: current = {
-		word: 0,
-		char: 0,
+	const checkComplete = () => {
+		return ($word === words.length - 1 && $char === words[$word].length - 1)
 	}
+
+	const handleComplete = () => {
+		state.set("result")
+		console.log($state)
+	}
+
 </script>
 
+<svelte:window on:keydown={handleKeydown}/>
+
+<style>
+	/*keep these styles for later usage*/
+	:global(.text-gray-300) {}
+  :global(.text-red-400) {}
+</style>
+
 <div class="flex flex-wrap">
-	{#each words as word, i}
-		<div class="mr-3 text-gray-500 text-2xl font-medium" id={`w${i}`}>
-			{#each word as char, j}
-				<span class="transition-colors" id={`c${i}${j}`}>
-					{char}
-				</span>
-			{/each}
-		</div>
-	{/each}
+	<Caret />
+	{#if words.length}
+		{#each words as word, i}
+			<div class="mr-3 text-gray-500 text-3xl font-regular tracking-wide" id={`w${i}`}>
+				{#each word as char, j}
+					<span class="transition-colors" id={`c${i}${j}`}>
+						{char}
+					</span>
+				{/each}
+			</div>
+		{/each}
+	{:else}
+		<p>Loading...</p>
+	{/if}
 </div>
