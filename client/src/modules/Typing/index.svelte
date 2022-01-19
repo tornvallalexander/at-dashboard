@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { word, char } from '../../stores/words';
+	import { state } from "../../stores/states"
 	import * as CLASS from "$utils/constants"
 	import axios from "axios"
 	import variables from '../../lib/variables';
@@ -14,10 +15,6 @@
 		}
 	}
 
-	onMount(() => {
-		window.document.onkeydown = (e) => handleKeystroke(e)
-	})
-
 	onMount(async () => {
 		const response = await axios.get<RandomTopWordsRes>(`${variables.baseURL}/randomTopWords`)
 		words = response.data.words
@@ -30,8 +27,8 @@
 		shiftKey: boolean;
 	}
 
-	const handleKeystroke = ({ key, altKey, ctrlKey, shiftKey }: KeystrokeProps) => {
-		if ($word === words.length) return
+	const handleKeydown = ({ key, altKey, ctrlKey, shiftKey }: KeystrokeProps) => {
+		if ($state !== "typing") return
 		switch (key) {
 			case "Backspace":
 				// check special keys
@@ -64,6 +61,11 @@
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
 			DOMCurrentChar.classList.add(CLASS.CHAR_CORRECT)
+			if (checkComplete()) {
+				char.update(ch => ch + 1)
+				handleComplete()
+				return
+			}
 			char.update(ch => ch + 1)
 			return
 		}
@@ -149,13 +151,30 @@
 		DOMCurrentWord.removeChild(DOMCurrentChar)
 	}
 
+	const checkComplete = () => {
+		return ($word === words.length - 1 && $char === words[$word].length - 1)
+	}
+
+	const handleComplete = () => {
+		state.set("result")
+		console.log($state)
+	}
+
 </script>
+
+<svelte:window on:keydown={handleKeydown}/>
+
+<style>
+	/*keep these styles for later usage*/
+	:global(.text-gray-300) {}
+  :global(.text-red-400) {}
+</style>
 
 <div class="flex flex-wrap">
 	<Caret />
 	{#if words.length}
 		{#each words as word, i}
-			<div class="mr-3 text-gray-500 text-2xl font-medium" id={`w${i}`}>
+			<div class="mr-3 text-gray-500 text-3xl font-regular tracking-wide" id={`w${i}`}>
 				{#each word as char, j}
 					<span class="transition-colors" id={`c${i}${j}`}>
 						{char}

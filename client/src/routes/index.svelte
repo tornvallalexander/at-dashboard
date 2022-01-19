@@ -1,17 +1,24 @@
 <script>
-	import Typing from "$modules/Typing/Typing.svelte"
+	import Typing from "$modules/Typing/index.svelte"
+	import Result from "$modules/Result/index.svelte"
+	import { state } from '../stores/states';
+
+	const options = {
+		typing: {
+			component: Typing
+		},
+		result: {
+			component: Result
+		}
+	}
+
+	let active
+
+	$: active = options[$state]
 </script>
 
 <svelte:head>
-	<title>Welcome</title>
+	<title>@typing</title>
 </svelte:head>
 
-<style>
-	div {
-		margin-top: 30vh;
-	}
-</style>
-
-<div class="">
-	<Typing />
-</div>
+<svelte:component this={active.component} />
