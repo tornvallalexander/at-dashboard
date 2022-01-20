@@ -156,6 +156,11 @@
 </script>
 
 <svelte:window on:keydown={handleKeydown}/>
+<svlete:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</svlete:head>
 
 <style>
 	/*keep these styles for later usage*/
@@ -165,6 +170,10 @@
 		text-decoration: underline;
 		text-decoration-color: #f87171;
 	}
+
+	/*div {*/
+  /*  font-family: 'Oxygen Mono', monospace;*/
+	/*}*/
 </style>
 
 <div class="flex flex-wrap max-w-[50rem]">

@@ -4,7 +4,7 @@
 </script>
 
 <Header />
-<div class="max-w-screen-lg mx-auto my-10">
+<div class="max-w-screen-lg mx-auto">
 	<slot></slot>
 </div>
 
