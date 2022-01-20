@@ -21,4 +21,6 @@
 	<title>@typing</title>
 </svelte:head>
 
-<svelte:component this={active.component} />
+<div>
+	<svelte:component this={active.component} />
+</div>

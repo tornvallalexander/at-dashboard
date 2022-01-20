@@ -30,4 +30,4 @@
 
 </script>
 
-<div class="absolute h-8 w-0.5 bg-brand-500 rounded-full animate-caret transition-all" id="caret"></div>
+<div class="absolute h-8 w-[3px] bg-brand-500 rounded-full animate-caret transition-all" id="caret"></div>
