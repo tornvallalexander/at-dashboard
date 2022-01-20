@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { word, char } from '../../stores/words';
+	import { word, char, wordsPerMinute } from '../../stores/words';
 	import { state } from "../../stores/states"
 	import { Class } from "$utils/constants"
 	import axios from "axios"
@@ -9,6 +9,7 @@
 	import { States } from '$utils/constants';
 
 	let words = [];
+	let startTime: Date;
 
 	interface RandomTopWordsRes {
 		data: {
@@ -28,8 +29,10 @@
 		shiftKey: boolean;
 	}
 
+
 	const handleKeydown = ({ key, altKey, ctrlKey, shiftKey }: KeystrokeProps) => {
 		if ($state !== States.typing) return
+
 		switch (key) {
 			case "Backspace":
 				// check special keys
@@ -59,9 +62,15 @@
 
 	const handleChar = (key: string) => {
 		const currentChar = words[$word][$char]
+
+		if ($word === 0 && $char === 0) {
+			startTimer()
+		}
+
 		if (key === currentChar) {
 			const DOMCurrentChar = getCurrentChar()
 			DOMCurrentChar.classList.add(Class.CHAR_CORRECT)
+			calculateWpm()
 			if (checkComplete()) {
 				char.update(ch => ch + 1)
 				handleComplete()
@@ -70,7 +79,9 @@
 			char.update(ch => ch + 1)
 			return
 		}
+
 		handleCharError(key)
+		calculateWpm()
 	}
 
 	const handleSpace = () => {
@@ -151,7 +162,24 @@
 
 	const handleComplete = () => {
 		state.set(States.result)
+		word.set(0)
+		char.set(0)
+		wordsPerMinute.set(0)
 	}
+
+	const startTimer = () => {
+		startTime = new Date()
+	}
+
+	const calculateWpm = () => {
+		if ($word < 1) return
+		const correctChars = document.querySelectorAll(`.${Class.CHAR_CORRECT}`).length;
+		const passedTime = (new Date() - startTime) / 1000;
+		const avgLength = 5;
+		const multiple = 60 / passedTime;
+		const total = multiple * correctChars;
+		wordsPerMinute.set(parseInt((total / avgLength).toFixed(0)))
+	};
 
 </script>
 
