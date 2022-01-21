@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { word, char, wordsPerMinute } from '../../stores/words';
+	import { word, char, wordsPerMinute, totalChars, incorrectChars } from '../../stores/words';
 	import { state } from "../../stores/states"
 	import { Class } from "$utils/constants"
 	import axios from "axios"
 	import variables from '../../lib/variables';
 	import Caret from "./Caret.svelte"
 	import { States } from '$utils/constants';
+	import { loading } from '$utils/words';
 
 	let words = [];
 	let startTime: Date;
@@ -61,6 +62,7 @@
 	}
 
 	const handleChar = (key: string) => {
+		totalChars.update(c => c + 1)
 		const currentChar = words[$word][$char]
 
 		if ($word === 0 && $char === 0) {
@@ -112,6 +114,7 @@
 	}
 
 	const handleCharError = (key: string) => {
+		incorrectChars.update(c => c + 1)
 		const DOMCurrentChar = getCurrentChar()
 		const DOMCurrentWord = getCurrentWord()
 		if (!DOMCurrentChar || $char > words[$word].length) {
@@ -162,9 +165,6 @@
 
 	const handleComplete = () => {
 		state.set(States.result)
-		word.set(0)
-		char.set(0)
-		wordsPerMinute.set(0)
 	}
 
 	const startTimer = () => {
@@ -184,11 +184,6 @@
 </script>
 
 <svelte:window on:keydown={handleKeydown}/>
-<svlete:head>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
-</svlete:head>
 
 <style>
 	/*keep these styles for later usage*/
@@ -198,17 +193,13 @@
 		text-decoration: underline;
 		text-decoration-color: #f87171;
 	}
-
-	/*div {*/
-  /*  font-family: 'Oxygen Mono', monospace;*/
-	/*}*/
 </style>
 
-<div class="flex flex-wrap max-w-[50rem]">
+<div class="flex flex-wrap max-w-[50rem] mx-auto">
 	<Caret />
 	{#if words.length}
 		{#each words as word, i}
-			<div class="mr-3 text-gray-500 text-3xl font-regular tracking-wide" id={`w${i}`}>
+			<div class="mr-3 text-gray-500 text-2xl font-normal leading-relaxed" id={`w${i}`}>
 				{#each word as char, j}
 					<span class="transition-colors" id={`c${i}${j}`}>
 						{char}
@@ -217,6 +208,10 @@
 			</div>
 		{/each}
 	{:else}
-		<p>Loading...</p>
+		<div class="mr-3 text-gray-500 text-2xl font-normal leading-relaxed">
+			{#each loading as word}
+				{word}{" "}
+			{/each}
+		</div>
 	{/if}
 </div>
