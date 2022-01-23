@@ -5,11 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tornvallalexander/at-dashboard/server/db"
 	"net/http"
+	"os"
 	"time"
 )
 
 var (
-	listenAddr = "localhost:8000"
+	listenAddr = ":" + os.Getenv("PORT")
 )
 
 func main() {
@@ -34,7 +35,7 @@ func initRouter(rdb *db.Database) *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	r.GET("/topWords", func(c *gin.Context) {
+	r.GET("/top-words", func(c *gin.Context) {
 		words, err := rdb.GetAllTopWords()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -46,7 +47,7 @@ func initRouter(rdb *db.Database) *gin.Engine {
 		})
 	})
 
-	r.GET("/randomTopWords", func(c *gin.Context) {
+	r.GET("/random-top-words", func(c *gin.Context) {
 		randWords, err := rdb.GetRandomTopWords()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
