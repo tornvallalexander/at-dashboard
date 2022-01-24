@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Typing from "$modules/Typing/index.svelte"
 	import Result from "$modules/Result/index.svelte"
 	import { state } from '../stores/states';
