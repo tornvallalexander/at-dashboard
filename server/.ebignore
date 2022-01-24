@@ -1,0 +1,13 @@
+# Ignore source files
+
+db/
+main.go
+utils.go
+go.mod
+go.sum
+README.md
+Dockerfile
+
+# Ignore Git files
+.git/
+.gitignore
