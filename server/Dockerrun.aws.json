@@ -1,5 +1,5 @@
 {
-  "AWSEBDockerVersion": "1",
+  "AWSEBDockerVersion": "3",
   "Image": {
     "Name": "tornvallalexander/golang-typing-api"
   },
