@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine
+FROM golang:1.17-alpine AS builder
 
 WORKDIR /app
 
@@ -9,9 +9,14 @@ RUN go mod download
 
 COPY . ./
 
+RUN CGO_ENABLED=0 GOOS=linux go build -o ./main
+
+
+FROM alpine:latest AS production
+
 ENV PORT 8080
 ENV GIN_MODE release
 
-RUN go build -o /golang-typing-api
+COPY --from=builder /app .
 
-CMD ["/golang-typing-api"]
+CMD ["./main"]
