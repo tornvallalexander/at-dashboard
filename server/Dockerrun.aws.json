@@ -1,11 +1,11 @@
 {
-  "AWSEBDockerVersion": "3",
+  "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "tornvallalexander/golang-typing-api"
+    "Name": "tornvallalexander/backend-typing-api"
   },
   "Ports": [
     {
-      "ContainerPort": 8080
+      "ContainerPort": 5000
     }
   ]
 }

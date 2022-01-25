@@ -1,22 +1,22 @@
-FROM golang:1.17-alpine AS builder
+FROM golang:latest
 
-WORKDIR /app
+WORKDIR ./app
 
-COPY go.mod ./
-COPY go.sum ./
+COPY go.mod .
+
+COPY go.sum .
 
 RUN go mod download
 
-COPY . ./
-
-RUN CGO_ENABLED=0 GOOS=linux go build -o ./main
-
-
-FROM alpine:latest AS production
+COPY . .
 
 ENV PORT 8080
-ENV GIN_MODE release
+ENV GIN_MODE=release
 
-COPY --from=builder /app .
+RUN go build
 
-CMD ["./main"]
+RUN find . -name "*.go" -type f -delete
+
+EXPOSE 8080
+
+CMD ["./server"]
