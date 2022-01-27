@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	listenAddr = "localhost:8000"
+	listenAddr = ":5000"
 )
 
 func main() {
@@ -20,28 +20,11 @@ func main() {
 	CheckFatalError(err)
 }
 
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	}
-}
-
-
 func initRouter(rdb *db.Database) *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"PUT", "PATCH", "GET"},
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
@@ -51,7 +34,7 @@ func initRouter(rdb *db.Database) *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	r.GET("/topWords", func(c *gin.Context) {
+	r.GET("/top-words", func(c *gin.Context) {
 		words, err := rdb.GetAllTopWords()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -63,7 +46,7 @@ func initRouter(rdb *db.Database) *gin.Engine {
 		})
 	})
 
-	r.GET("/randomTopWords", func(c *gin.Context) {
+	r.GET("/random-top-words", func(c *gin.Context) {
 		randWords, err := rdb.GetRandomTopWords()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{

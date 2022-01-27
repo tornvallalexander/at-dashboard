@@ -19,7 +19,7 @@
 	}
 
 	onMount(async () => {
-		const response = await axios.get<RandomTopWordsRes>(`${variables.baseURL}/randomTopWords`)
+		const response = await axios.get<RandomTopWordsRes>(`${variables.baseURL}/random-top-words`)
 		words = response.data.words
 	})
 
