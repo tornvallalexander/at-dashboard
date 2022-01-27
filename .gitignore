@@ -1,11 +1,16 @@
-.DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
-.env
-.env.*
-!.env.example
+client/.DS_Store
+client/node_modules
+client/build
+client/.svelte-kit
+client/package
 
-.idea
+client/.idea
+
+server/.env.development
+server/.env.production
+server/.env*
+
+client/.env.development
+client/.env.production
+client/.env.*
 
