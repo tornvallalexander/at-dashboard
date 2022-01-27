@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<title>@typing</title>
+	<title>Typing - tornvallalexander</title>
 </svelte:head>
 
 <div>
