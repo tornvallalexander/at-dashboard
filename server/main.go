@@ -5,12 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tornvallalexander/at-dashboard/server/db"
 	"net/http"
-	"os"
 	"time"
 )
 
 var (
-	listenAddr = ":" + os.Getenv("PORT")
+	listenAddr = ":5000"
 )
 
 func main() {
